@@ -7,7 +7,7 @@ final postsProvider = FutureProvider<PostsModel>((ref) async {
   return await ref.read(postRepoProvider).fetchPost();
 });
 
-final commentsProvider = FutureProvider.family<CommentsModel, int>((
+final commentsProvider = FutureProvider.family.autoDispose<CommentsModel, int>((
   ref,
   id,
 ) async {

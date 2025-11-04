@@ -11,4 +11,9 @@ class QuoteRepoImpl implements QuoteRepo {
     final response = await _dio.get("https://dummyjson.com/quotes");
     return QuotesModel.fromJson(response.data);
   }
+
+  Future<String> fetchRandomQuote() async {
+    final response = await _dio.get("https://dummyjson.com/quotes/random");
+    return response.data['quote'];
+  }
 }

@@ -11,7 +11,6 @@ class QuotesScreen extends ConsumerWidget {
     final quotesAsync = ref.watch(quotesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text("Quotes"), backgroundColor: Colors.white60),
       backgroundColor: Color.fromARGB(255, 224, 219, 219),
       body: quotesAsync.when(
         data: (data) {

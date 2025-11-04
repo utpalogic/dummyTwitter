@@ -11,3 +11,13 @@ final quoteRepoProvider = Provider<QuoteRepo>((ref) {
 final quotesProvider = FutureProvider<QuotesModel>((ref) async {
   return await ref.read(quoteRepoProvider).fetchQuotes();
 });
+
+final quotesRepoProvider = Provider<QuoteRepoImpl>((ref) {
+  return QuoteRepoImpl(ref.watch(dioProvider));
+});
+
+final randomQuoteProvider = FutureProvider.autoDispose<Quote>((ref) async {
+  final dio = ref.watch(dioProvider);
+  final response = await dio.get('quotes/random');
+  return Quote.fromJson(response.data);
+});

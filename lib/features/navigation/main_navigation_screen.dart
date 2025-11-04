@@ -13,21 +13,22 @@ class MainNavigationScreen extends ConsumerStatefulWidget {
 }
 
 class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
 
-  final List<Widget> _screens = const [PostsScreen(), QuotesScreen()];
+  final List<Widget> screens = const [PostsScreen(), QuotesScreen()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      appBar: AppBar(title: Text(selectedIndex == 0 ? "Feed" : "Quotes")),
+      body: screens[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         type: BottomNavigationBarType.fixed,
-        onTap: (index) => setState(() => _selectedIndex = index),
+        onTap: (index) => setState(() => selectedIndex = index),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.article_outlined),

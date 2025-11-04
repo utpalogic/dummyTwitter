@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saveload_app/features/posts/domain/posts_model.dart';
 import 'package:saveload_app/features/posts/presentation/post_detail_screen.dart';
 import 'package:saveload_app/features/posts/presentation/provider/post_providers.dart';
+import 'package:saveload_app/features/quotes/presentatiom/provider/quote_provider.dart';
 
 Post mypost = Post(
   id: 1,
@@ -20,40 +21,62 @@ class PostsScreen extends ConsumerWidget {
   const PostsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final postAsync = ref.watch(postsProvider);
+    final randomQuoteAsync = ref.watch(randomQuoteProvider);
+
     return Scaffold(
-      appBar: AppBar(title: Text("Feed")),
-      body: Column(
-        children: [
-          Expanded(
-            child: postAsync.when(
-              data: (data) {
-                return ListView.separated(
-                  itemBuilder: (context, index) {
-                    final post = data.posts[index];
-                    return PostBox(post: post);
-                  },
-                  separatorBuilder: (context, index) => SizedBox(height: 10),
-                  itemCount: data.posts.length,
-                );
-              },
-              error: (error, stackTrace) => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("$error"),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.invalidate(postsProvider);
-                    },
-                    child: Text("Retry"),
+      body: postAsync.when(
+        data: (data) {
+          return ListView(
+            padding: const EdgeInsets.all(8),
+            children: [
+              randomQuoteAsync.when(
+                data: (quote) => Card(
+                  color: const Color.fromARGB(255, 236, 226, 226),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      '“${quote.quote}” — ${quote.author}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ],
+                ),
+                loading: () => const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                error: (error, context) => Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text("Failed to load quote"),
+                ),
               ),
-              loading: () => Center(child: CircularProgressIndicator()),
-            ),
+
+              SizedBox(height: 10),
+
+              ...data.posts.map((post) => PostBox(post: post)),
+            ],
+          );
+        },
+        error: (error, stackTrace) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("$error"),
+              ElevatedButton(
+                onPressed: () => ref.invalidate(postsProvider),
+                child: const Text("Retry"),
+              ),
+            ],
           ),
-        ],
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -82,16 +105,16 @@ class PostBox extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
                 children: [
                   Container(
                     width: 45,
                     height: 45,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color.fromARGB(255, 161, 201, 233),
+                      color: const Color.fromARGB(255, 202, 214, 224),
                     ),
                   ),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +130,7 @@ class PostBox extends StatelessWidget {
                                 ),
                               ),
                             ),
-
+                            const SizedBox(width: 6),
                             Text(
                               "@user${post.userId}",
                               style: TextStyle(
@@ -115,7 +138,7 @@ class PostBox extends StatelessWidget {
                                 fontSize: 13,
                               ),
                             ),
-
+                            const SizedBox(width: 6),
                             Text(
                               "· 12h",
                               style: TextStyle(
@@ -125,8 +148,7 @@ class PostBox extends StatelessWidget {
                             ),
                           ],
                         ),
-
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         RichText(
                           text: TextSpan(
                             children: [
@@ -148,22 +170,22 @@ class PostBox extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(height: 10),
-
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          spacing: 15.0,
                           children: [
                             _iconText(
                               Icons.thumb_down_alt_outlined,
                               "${post.reactions.dislikes}",
                               const Color.fromARGB(255, 136, 137, 139),
                             ),
+                            SizedBox(width: 15),
                             _iconText(
                               Icons.favorite,
                               "${post.reactions.likes}",
                               const Color.fromARGB(255, 200, 64, 64),
                             ),
+                            SizedBox(width: 15),
                             _iconText(
                               Icons.remove_red_eye,
                               "${post.views}",
@@ -177,7 +199,6 @@ class PostBox extends StatelessWidget {
                 ],
               ),
             ),
-
             const Divider(thickness: 0.8, color: Colors.grey),
           ],
         ),
@@ -189,8 +210,8 @@ class PostBox extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 18, color: color),
-        SizedBox(width: 6),
-        Text(text, style: TextStyle(color: Colors.grey[700], fontSize: 13)),
+        const SizedBox(width: 6),
+        Text(text, style: TextStyle(color: Colors.grey, fontSize: 13)),
       ],
     );
   }
