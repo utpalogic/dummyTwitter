@@ -6,4 +6,5 @@ abstract class PostRepo {
   Future<PostsModel> fetchPost();
   Future<Post> fetchOnePost({required int id});
   Future<CommentsModel> fetchCommentOfPost({required int id});
+  
 }

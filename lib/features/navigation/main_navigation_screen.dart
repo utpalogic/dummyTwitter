@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:saveload_app/features/posts/presentation/posts_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:saveload_app/features/auth/presentation/provider/auth_provider.dart';
-import 'package:saveload_app/features/quotes/presentatiom/quotes_screen.dart';
+import '../auth/presentation/provider/auth_provider.dart';
+import '../auth/screens/login_screen.dart';
+import '../posts/presentation/posts_screen.dart';
+import '../quotes/presentatiom/quotes_screen.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
@@ -14,7 +15,6 @@ class MainNavigationScreen extends ConsumerStatefulWidget {
 
 class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   int selectedIndex = 0;
-
   final List<Widget> screens = const [PostsScreen(), QuotesScreen()];
 
   @override

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "654229876045",
+    "project_id": "dummytwitter-4faa2",
+    "storage_bucket": "dummytwitter-4faa2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654229876045:android:10f422ea2c7cff3d1fdb04",
+        "android_client_info": {
+          "package_name": "com.dummyTwitter.example"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzNiGeuTXO27aHiaC1Ia8zbKgYSydFLZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

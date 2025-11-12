@@ -14,7 +14,7 @@ class Home extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Welcome,'${user?.firstName ?? 'User'}"),
+            Text("Welcome,'${user?.name ?? 'User'}"),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {

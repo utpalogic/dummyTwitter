@@ -17,3 +17,4 @@ final commentsProvider = FutureProvider.family.autoDispose<CommentsModel, int>((
 final singlePostProvider = FutureProvider.family<Post, int>((ref, id) async {
   return await ref.read(postRepoProvider).fetchOnePost(id: id);
 });
+

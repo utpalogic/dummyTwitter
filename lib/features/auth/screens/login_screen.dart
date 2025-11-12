@@ -1,18 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saveload_app/features/auth/presentation/provider/auth_provider.dart';
-import 'package:saveload_app/features/auth/screens/home.dart';
-import 'package:saveload_app/features/navigation/main_navigation_screen.dart';
-import 'package:saveload_app/features/posts/presentation/posts_screen.dart';
+import 'signup_screen.dart';
+import '../../navigation/main_navigation_screen.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final usernameController = TextEditingController();
-    final passwordController = TextEditingController();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> handleLogin() async {
+    setState(() => isLoading = true);
+    try {
+      final auth = await ref
+          .read(authProvider.notifier)
+          .login(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
+
+      if (auth != null && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("✅ Login successful")));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("⚠️ Login failed. Please check credentials."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("❌ Login failed: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -20,9 +70,9 @@ class LoginScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              controller: usernameController,
+              controller: emailController,
               decoration: const InputDecoration(
-                labelText: 'Username',
+                labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -36,41 +86,23 @@ class LoginScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await ref
-                      .read(authProvider.notifier)
-                      .login(
-                        username: usernameController.text,
-                        password: passwordController.text,
-                      );
 
-                  final auth = ref.read(authProvider);
-                  if (auth != null) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MainNavigationScreen(),
-                      ),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Logged in successfully!"),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Login failed. Invalid credentials"),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
+            ElevatedButton(
+              onPressed: isLoading ? null : handleLogin,
+
+              child: isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text("Login"),
+            ),
+
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                );
               },
-              child: const Text("Login"),
+              child: const Text("Don't have an account? Sign Up"),
             ),
           ],
         ),

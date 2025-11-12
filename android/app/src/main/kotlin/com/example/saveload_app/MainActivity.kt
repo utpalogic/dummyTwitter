@@ -1,4 +1,4 @@
-package com.example.saveload_app
+package com.dummyTwitter.example
 
 import io.flutter.embedding.android.FlutterActivity
 

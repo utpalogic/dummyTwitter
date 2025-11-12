@@ -1,13 +1,29 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saveload_app/features/auth/screens/loader.dart';
 import 'package:saveload_app/features/auth/screens/login_screen.dart';
 import 'package:saveload_app/features/posts/presentation/posts_screen.dart';
+import 'package:saveload_app/firebase_options.dart';
 
 //import 'package:saveload_app/screens/save_load.dart';
 
-void main() {
-  runApp(ProviderScope(child: const MyApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    UserCredential user = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+          email: 'test@example.com',
+          password: '123456',
+        );
+    print('User created: ${user.user?.uid}');
+  } catch (e) {
+    print('Firebase error: $e');
+  }
+
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
